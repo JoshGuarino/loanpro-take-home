@@ -1,9 +1,10 @@
+import os
 import requests
 
 
 class APIClient:
-    BASE_URL = "http://localhost:3000"
-    AUTH_TOKEN = "mysecrettoken"
+    BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:3000")
+    AUTH_TOKEN = os.environ.get("API_AUTH_TOKEN", "mysecrettoken")
 
     def __init__(self, environment: str):
         if environment not in ("dev", "prod"):

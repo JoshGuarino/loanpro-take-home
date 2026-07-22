@@ -1,0 +1,72 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start API container
+        run: |
+          docker run -d -p 3000:3000 \
+            ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+          sleep 5
+          curl -f http://localhost:3000/dev/users
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (dev)
+        run: pytest tests/ --env=dev --html=report-dev.html --self-contained-html
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-dev
+          path: report-dev.html
+
+  test-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start API container
+        run: |
+          docker run -d -p 3000:3000 \
+            ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+          sleep 5
+          curl -f http://localhost:3000/prod/users
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (prod)
+        run: pytest tests/ --env=prod --html=report-prod.html --self-contained-html
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-prod
+          path: report-prod.html

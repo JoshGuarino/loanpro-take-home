@@ -1,41 +1,35 @@
+import pytest
+
+
 class TestCreateUser:
-    def test_create_returns_201(self, client, sample_user):
-        response = client.create_user(sample_user)
+    def test_create_returns_201(self, client, user_factory):
+        user, response = user_factory()
         assert response.status_code == 201
 
-    def test_create_returns_user_data(self, client, sample_user):
-        response = client.create_user(sample_user)
+    def test_create_returns_user_data(self, client, user_factory):
+        user, response = user_factory()
         data = response.json()
-        assert data["name"] == sample_user["name"]
-        assert data["email"] == sample_user["email"]
-        assert data["age"] == sample_user["age"]
+        assert data["name"] == user["name"]
+        assert data["email"] == user["email"]
+        assert data["age"] == user["age"]
 
-    def test_create_duplicate_email_returns_409(self, client, created_user):
-        response = client.create_user(created_user)
+    def test_create_duplicate_email_returns_409(self, client, user_factory):
+        user, _ = user_factory()
+        response = client.create_user(user)
         assert response.status_code == 409
 
-    def test_create_missing_name_returns_400(self, client, unique_email):
-        response = client.create_user({"email": unique_email, "age": 30})
+    @pytest.mark.parametrize("payload", [
+        {"email": "a@b.com", "age": 30},
+        {"name": "Test", "age": 30},
+        {"name": "Test", "email": "a@b.com"},
+    ])
+    def test_create_missing_required_field_returns_400(self, client, payload):
+        response = client.create_user(payload)
         assert response.status_code == 400
 
-    def test_create_missing_email_returns_400(self, client):
-        response = client.create_user({"name": "Test", "age": 30})
-        assert response.status_code == 400
-
-    def test_create_missing_age_returns_400(self, client, unique_email):
-        response = client.create_user({"name": "Test", "email": unique_email})
-        assert response.status_code == 400
-
-    def test_create_invalid_age_zero_returns_400(self, client, unique_email):
-        response = client.create_user({"name": "Test", "email": unique_email, "age": 0})
-        assert response.status_code == 400
-
-    def test_create_invalid_age_negative_returns_400(self, client, unique_email):
-        response = client.create_user({"name": "Test", "email": unique_email, "age": -1})
-        assert response.status_code == 400
-
-    def test_create_invalid_age_over_max_returns_400(self, client, unique_email):
-        response = client.create_user({"name": "Test", "email": unique_email, "age": 151})
+    @pytest.mark.parametrize("age", [0, -1, 151])
+    def test_create_invalid_age_returns_400(self, client, user_factory, age):
+        user, response = user_factory(age=age)
         assert response.status_code == 400
 
     def test_create_invalid_email_format_returns_400(self, client):

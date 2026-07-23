@@ -1,14 +1,16 @@
 class TestGetUser:
-    def test_get_existing_returns_200(self, client, created_user):
-        response = client.get_user(created_user["email"])
+    def test_get_existing_returns_200(self, client, user_factory):
+        user, _ = user_factory()
+        response = client.get_user(user["email"])
         assert response.status_code == 200
 
-    def test_get_returns_correct_data(self, client, created_user):
-        response = client.get_user(created_user["email"])
+    def test_get_returns_correct_data(self, client, user_factory):
+        user, _ = user_factory()
+        response = client.get_user(user["email"])
         data = response.json()
-        assert data["name"] == created_user["name"]
-        assert data["email"] == created_user["email"]
-        assert data["age"] == created_user["age"]
+        assert data["name"] == user["name"]
+        assert data["email"] == user["email"]
+        assert data["age"] == user["age"]
 
     def test_get_nonexistent_returns_404(self, client):
         response = client.get_user("nonexistent@example.com")

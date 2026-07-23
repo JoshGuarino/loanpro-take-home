@@ -29,24 +29,18 @@ def unique_email():
 
 
 @pytest.fixture
-def sample_user(unique_email):
-    return {
-        "name": "Test User",
-        "email": unique_email,
-        "age": 30
-    }
+def user_factory(client, unique_email):
+    users = []
 
+    def _create(name="Test User", email=None, age=30):
+        if email is None:
+            email = unique_email
+        user = {"name": name, "email": email, "age": age}
+        response = client.create_user(user)
+        users.append(user)
+        return user, response
 
-@pytest.fixture
-def created_user(client, sample_user):
-    client.create_user(sample_user)
-    return sample_user
+    yield _create
 
-
-@pytest.fixture
-def second_user(unique_email):
-    return {
-        "name": "Second User",
-        "email": unique_email,
-        "age": 25
-    }
+    for user in users:
+        client.delete_user(user["email"])

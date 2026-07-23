@@ -7,12 +7,14 @@ class TestListUsers:
         response = client.list_users()
         assert isinstance(response.json(), list)
 
-    def test_list_includes_created_user(self, client, created_user):
+    def test_list_includes_created_user(self, client, user_factory):
+        user, _ = user_factory()
         response = client.list_users()
         emails = [u["email"] for u in response.json()]
-        assert created_user["email"] in emails
+        assert user["email"] in emails
 
-    def test_list_user_has_required_fields(self, client, created_user):
+    def test_list_user_has_required_fields(self, client, user_factory):
+        user_factory()
         response = client.list_users()
         for user in response.json():
             assert "name" in user

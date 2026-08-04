@@ -34,3 +34,9 @@ class APIClient:
     def delete_user_bad_auth(self, email: str) -> requests.Response:
         headers = {**self.headers, "Authentication": "badtoken123"}
         return requests.delete(f"{self.base}/users/{email}", headers=headers)
+
+    def add_note(self, email: str, data: dict) -> requests.Response:
+        return requests.post(f"{self.base}/users/{email}/notes", json=data, headers=self.headers)
+
+    def add_note(self, email: str, data: dict) -> requests.Response:
+        return requests.post(f"{self.base}/users/{email}/notes", json=data, headers=self.headers)

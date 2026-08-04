@@ -11,6 +11,7 @@ class TestGetUser:
         assert data["name"] == user["name"]
         assert data["email"] == user["email"]
         assert data["age"] == user["age"]
+        assert data["notes"] == user["notes"]
 
     def test_get_nonexistent_returns_404(self, client):
         response = client.get_user("nonexistent@example.com")

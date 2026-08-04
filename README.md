@@ -47,6 +47,7 @@ pytest tests/ --env=dev --html=report-dev.html --self-contained-html
 │   ├── test_create_user.py        # POST /{env}/users
 │   ├── test_get_user.py           # GET /{env}/users/{email}
 │   ├── test_update_user.py        # PUT /{env}/users/{email}
+│   ├── test_notes.py              # POST /{env}/users/{email}/notes
 │   └── test_delete_user.py        # DELETE /{env}/users/{email}
 ├── requirements.txt
 ├── pytest.ini

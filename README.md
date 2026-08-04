@@ -47,7 +47,7 @@ pytest tests/ --env=dev --html=report-dev.html --self-contained-html
 │   ├── test_create_user.py        # POST /{env}/users
 │   ├── test_get_user.py           # GET /{env}/users/{email}
 │   ├── test_update_user.py        # PUT /{env}/users/{email}
-│   ├── test_notes.py              # POST /{env}/users/{email}/notes
+│   ├── test_add_notes.py          # POST /{env}/users/{email}/notes
 │   └── test_delete_user.py        # DELETE /{env}/users/{email}
 ├── requirements.txt
 ├── pytest.ini
@@ -56,21 +56,22 @@ pytest tests/ --env=dev --html=report-dev.html --self-contained-html
 
 ## Bugs Found
 
-| # | Endpoint | Environment | Expected | Actual | Severity |
-|---|----------|-------------|----------|--------|----------|
-| 1 | POST /users | both | 409 | 500 | High |
-| 2 | POST /users | both | 400 | 500 | High |
-| 3 | GET /users/{email} | both | 404 | 500 | High |
-| 4 | PUT /users/{email} | both | Persisted | Not persisted | High |
-| 5 | PUT /users/{email} | both | 409 | 200 | Medium |
-| 6 | DELETE → GET | both | 404 | 500 | High |
-| 7 | DELETE /users/{email} | dev | 401 | 204 | Critical |
+| #   | Endpoint              | Environment | Expected  | Actual        | Severity |
+| --- | --------------------- | ----------- | --------- | ------------- | -------- |
+| 1   | POST /users           | both        | 409       | 500           | High     |
+| 2   | POST /users           | both        | 400       | 500           | High     |
+| 3   | GET /users/{email}    | both        | 404       | 500           | High     |
+| 4   | PUT /users/{email}    | both        | Persisted | Not persisted | High     |
+| 5   | PUT /users/{email}    | both        | 409       | 200           | Medium   |
+| 6   | DELETE → GET          | both        | 404       | 500           | High     |
+| 7   | DELETE /users/{email} | dev         | 401       | 204           | Critical |
 
 See [BUGS.md](BUGS.md) for detailed descriptions.
 
 ## CI/CD
 
 GitHub Actions runs tests in parallel against both environments:
+
 - **test-dev** — runs against `dev` environment
 - **test-prod** — runs against `prod` environment
 

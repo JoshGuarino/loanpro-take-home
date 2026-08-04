@@ -37,6 +37,3 @@ class APIClient:
 
     def add_note(self, email: str, data: dict) -> requests.Response:
         return requests.post(f"{self.base}/users/{email}/notes", json=data, headers=self.headers)
-
-    def add_note(self, email: str, data: dict) -> requests.Response:
-        return requests.post(f"{self.base}/users/{email}/notes", json=data, headers=self.headers)
